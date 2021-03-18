@@ -1,5 +1,22 @@
 import { Course } from '../entities/Course';
-import { Field, ObjectType, Query, Resolver } from 'type-graphql';
+import { Arg, Field, InputType, Int, Mutation, ObjectType, Query, Resolver } from 'type-graphql';
+
+
+@InputType()
+class CreateCourseInput {
+	@Field(() => String, { description: "Course number, please prefix it with the department name. Cannot duplicate." })
+	courseRef: string;
+
+	@Field(() => String, { description: "The name of the course, try not to make it too long but make it unique." })
+	name: string;
+
+	@Field(() => String, { description: "Please describe the course, prerequisites and what the students will get out of it." })
+	description: string;
+
+	@Field(() => Int, { description: "The number of credits this course satifies." })
+	credits: number;
+}
+
 
 @ObjectType()
 class FieldError {
@@ -11,7 +28,7 @@ class FieldError {
 }
 
 @ObjectType()
-	class CourseResponse {
+	class CoursesResponse {
 	@Field(() => [FieldError], { nullable: true })
 	errors?: FieldError[];
 
@@ -25,8 +42,8 @@ export class CourseResolver {
   // Queries
   //--------------------------------------
 
-  @Query(() => CourseResponse)
-  async courses(): Promise<CourseResponse> {
+  @Query(() => CoursesResponse)
+  async courses(): Promise<CoursesResponse> {
     const courses = await Course.find({}); // find all courses
 		return courses.length > 0
       ? {courses}
@@ -43,4 +60,9 @@ export class CourseResolver {
   //--------------------------------------
   // Mutations
   //--------------------------------------
+
+	@Mutation(() => Course)
+	async createCourse(@Arg("options") options: CreateCourseInput) {
+		return Course.create(options).save();
+	}
 }

@@ -29,7 +29,7 @@ export class Course extends BaseEntity {
 
 	@Field(() => Int)
   @Column({ nullable: false, type: 'int'})
-  credit!: number;
+  credits!: number;
 
   @Field(() => String)
   @CreateDateColumn()
