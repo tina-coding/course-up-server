@@ -1,12 +1,12 @@
 import { ApolloServer } from 'apollo-server-express';
+import cors from 'cors';
 import express from 'express';
 import { buildSchema } from 'type-graphql';
 import { createConnection } from "typeorm";
-
 // Entities
 import { Course } from './entities/Course';
-import { User } from './entities/User';
 import { Teacher } from './entities/Teacher';
+import { User } from './entities/User';
 // Resolvers
 import { CourseResolver } from './resolvers/course';
 import { TeacherResolver } from './resolvers/teacher';
@@ -23,6 +23,14 @@ const main = async () => {
 	});
 
 	const app = express();
+
+	// setup cors
+	app.use(
+		cors({
+			origin: "http://localhost:3000",
+			credentials: true
+		})
+	);
 
 	const apolloServer = new ApolloServer({
 		schema: await buildSchema({

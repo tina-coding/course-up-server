@@ -1,9 +1,27 @@
-import {
-  Query,
-  Resolver
-} from 'type-graphql';
+import { Arg, Field, InputType, Mutation, Query, Resolver } from 'type-graphql';
+import { getConnection } from 'typeorm';
 import { Teacher } from '../entities/Teacher';
 
+@InputType()
+class CreateTeacherInput {
+  @Field(() => String)
+  fName!: string;
+
+  @Field(() => String)
+  lName!: string;
+
+  @Field(() => String)
+  email!: string;
+
+  @Field(() => String, { nullable: true })
+  phone?: string;
+
+  @Field(() => String, { nullable: true })
+  office?: string;
+
+  @Field(() => String)
+  username: string;
+}
 
 @Resolver()
 export class TeacherResolver {
@@ -16,4 +34,39 @@ export class TeacherResolver {
     return await Teacher.find({});
   }
 
+  //--------------------------------------
+  // Mutations
+  //--------------------------------------
+
+  @Mutation(() => Boolean)
+  async createTeacher(
+    @Arg('options') options: CreateTeacherInput
+  ): Promise<boolean> {
+    // create the teacher => get the id => create the user => return { teacher, user }
+    const { fName, lName, email, office, phone, username } = options;
+    try {
+      await getConnection().transaction(async (transactionmanager) => {
+        const teacherId = await transactionmanager.query(
+          `
+				  INSERT INTO teacher ("fName", "lName", "email", "phone", "office")
+					values ($1, $2, $3, $4, $5)
+					RETURNING id;
+				`,
+          [fName, lName, email, phone, office]
+        );
+
+        await transactionmanager.query(
+          `
+				 INSERT INTO "user" ("teacherId", "username")
+				 values ($1, $2)
+				`,
+          [teacherId[0].id, username]
+        );
+      });
+      return true;
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
+  }
 }
