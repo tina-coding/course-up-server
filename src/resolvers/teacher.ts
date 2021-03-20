@@ -46,22 +46,24 @@ export class TeacherResolver {
     const { fName, lName, email, office, phone, username } = options;
     try {
       await getConnection().transaction(async (transactionmanager) => {
-        const teacherId = await transactionmanager.query(
+        const userId = await transactionmanager.query(
           `
-				  INSERT INTO teacher ("fName", "lName", "email", "phone", "office")
-					values ($1, $2, $3, $4, $5)
-					RETURNING id;
-				`,
-          [fName, lName, email, phone, office]
+         INSERT INTO "user" ("username")
+         values ($1)
+         RETURNING id;
+        `,
+          [username]
         );
 
         await transactionmanager.query(
           `
-				 INSERT INTO "user" ("teacherId", "username")
-				 values ($1, $2)
+				  INSERT INTO teacher ("fName", "lName", "email", "phone", "office", "userId")
+					values ($1, $2, $3, $4, $5, $6)
+					RETURNING id;
 				`,
-          [teacherId[0].id, username]
+          [fName, lName, email, phone, office, userId[0].id]
         );
+
       });
       return true;
     } catch (error) {
