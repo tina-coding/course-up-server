@@ -4,24 +4,36 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinColumn,
-  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn
 } from 'typeorm';
-import { Teacher } from '../entities/Teacher';
 
 @ObjectType()
 @Entity()
-export class User extends BaseEntity {
+export class Teacher extends BaseEntity {
   @Field(() => Int)
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Field(() => Int)
-  @OneToOne(() => Teacher)
-  @JoinColumn()
-  teacher: Teacher;
+  @Field(() => String)
+  @Column()
+  fName!: string;
+
+	@Field(() => String)
+  @Column()
+  lName!: string;
+
+  @Field(() => String)
+  @Column({ nullable: false, unique: true })
+  email!: string;
+
+  @Field(() => String)
+  @Column({ nullable: true })
+  phone?: string;
+
+  @Field(() => String)
+  @Column({ nullable: true })
+  office?: string;
 
   @Field(() => String)
   @CreateDateColumn()
@@ -30,8 +42,4 @@ export class User extends BaseEntity {
   @Field(() => String)
   @UpdateDateColumn()
   updatedAt: Date;
-
-  @Field()
-  @Column({ unique: true })
-  username!: string;
 }
