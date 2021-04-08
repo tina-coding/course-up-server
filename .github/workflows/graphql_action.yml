@@ -13,4 +13,4 @@ jobs:
 
       - uses: kamilkisiela/graphql-inspector@master
         with:
-          schema: 'master:schema.gql'
+          schema: 'master:schema.graphql'
