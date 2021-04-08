@@ -13,4 +13,5 @@ jobs:
 
       - uses: kamilkisiela/graphql-inspector@v2.5.0
         with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           schema: 'master:schema.gql'
