@@ -4,9 +4,14 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn
 } from 'typeorm';
+
+// Entities
+import { User } from './User';
 
 @ObjectType()
 @Entity()
@@ -15,11 +20,16 @@ export class Teacher extends BaseEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
+  @Field(() => Int)
+  @OneToOne(() => User)
+  @JoinColumn()
+  user: User;
+
   @Field(() => String)
   @Column()
   fName!: string;
 
-	@Field(() => String)
+  @Field(() => String)
   @Column()
   lName!: string;
 
