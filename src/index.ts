@@ -1,3 +1,4 @@
+import { StatisticsResolver } from './resolvers/statistics';
 import { ApolloServer } from 'apollo-server-express';
 import cors from 'cors';
 import express from 'express';
@@ -34,8 +35,9 @@ const main = async () => {
 
 	const apolloServer = new ApolloServer({
 		schema: await buildSchema({
-			resolvers: [CourseResolver, TeacherResolver],
-			validate: false
+			resolvers: [CourseResolver, TeacherResolver, StatisticsResolver],
+			validate: false,
+			emitSchemaFile: true,
 		}),
 		context: ({ req, res }) => ({ req, res })
 	});
