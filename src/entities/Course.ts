@@ -1,9 +1,11 @@
+import { Teacher } from './Teacher';
 import { Field, Int, ObjectType } from 'type-graphql';
 import {
 	BaseEntity,
 	Column,
 	CreateDateColumn,
 	Entity,
+  ManyToOne,
 	PrimaryGeneratedColumn,
 	UpdateDateColumn
 } from 'typeorm';
@@ -14,6 +16,14 @@ export class Course extends BaseEntity {
   @Field(() => Int)
   @PrimaryGeneratedColumn()
   id!: number;
+
+  @Field()
+  @Column()
+  teacherId: number;
+
+  @Field()
+  @ManyToOne(() => Teacher, (teacher) => teacher.courses)
+  teacher: Teacher;
 
 	@Field(() => String)
 	@Column({ nullable: false, unique: true })
