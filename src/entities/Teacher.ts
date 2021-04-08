@@ -1,3 +1,4 @@
+import { Course } from './Course';
 import { Field, Int, ObjectType } from 'type-graphql';
 import {
   BaseEntity,
@@ -5,6 +6,7 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn
@@ -24,6 +26,10 @@ export class Teacher extends BaseEntity {
   @OneToOne(() => User)
   @JoinColumn()
   user: User;
+
+  @Field(() => Int)
+  @OneToMany(() => Course, (course) => course.teacher)
+  courses: Course[];
 
   @Field(() => String)
   @Column()

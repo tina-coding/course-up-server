@@ -1,3 +1,4 @@
+import { Teacher } from './../entities/Teacher';
 import { Course } from '../entities/Course';
 import {
   Arg,
@@ -9,6 +10,7 @@ import {
   Query,
   Resolver
 } from 'type-graphql';
+import { getConnection } from 'typeorm';
 
 @InputType()
 class CreateCourseInput {
@@ -34,6 +36,9 @@ class CreateCourseInput {
     description: 'The number of credits this course satifies.'
   })
   credits: number;
+
+  @Field(() => Int, { description: "The id of the teacher that will teach this course."})
+  teacherId: number;
 }
 
 @ObjectType()
@@ -70,7 +75,18 @@ export class CourseResolver {
 
   @Query(() => CoursesResponse)
   async courses(): Promise<CoursesResponse> {
-    const courses = await Course.find({}); // find all courses
+    const courses = await getConnection().query(`
+      SELECT c.*,
+      json_build_object(
+        'id', t.id,
+        'fName', t."fName",
+        'lName', t."lName",
+        'email', t.email
+      ) teacher
+      FROM course c
+      INNER JOIN teacher t on t.id = c."teacherId"
+      ORDER BY c."createdAt" DESC
+    `);  // find all courses
     return courses.length > 0
       ? { courses }
       : {
@@ -93,9 +109,22 @@ export class CourseResolver {
   ): Promise<CourseResponse> {
     let course;
     try {
-      course = await Course.create(options).save();
+      // Check if teacher exists
+      const teacher = await Teacher.findOne({ id: options.teacherId });
+
+      if (!teacher) {
+        return {
+          errors: [
+            {
+              field: 'course',
+              message: 'Failed to add teacher.'
+            }
+          ]
+        };
+      } else {
+        course = await Course.create({ ...options }).save();
+      }
     } catch (error) {
-      console.log({ error });
       // User tries to add a course with existing courseRef
       if (error.code === '23505' && error.detail.includes('courseRef')) {
         return {
