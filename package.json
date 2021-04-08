@@ -1,0 +1,30 @@
+{
+  "name": "course-up-server",
+  "version": "0.1.0",
+  "description": "app for pd, creating courses with teachers and students",
+  "main": "index.ts",
+  "scripts": {
+    "watch": "tsc -w",
+    "dev": "nodemon dist/index.js",
+    "start": "ts-node src/index.ts"
+  },
+  "repository": "git@github.com:tinadev/course-up-server.git",
+  "author": "Tina G <tina@smartlogic.io>",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/cors": "^2.8.10",
+    "@types/node": "^14.14.35",
+    "nodemon": "^2.0.7",
+    "typescript": "^4.2.3"
+  },
+  "dependencies": {
+    "apollo-server-express": "^2.21.1",
+    "class-validator": "^0.13.1",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "graphql": "^15.5.0",
+    "pg": "^8.5.1",
+    "type-graphql": "^1.1.1",
+    "typeorm": "^0.2.31"
+  }
+}
